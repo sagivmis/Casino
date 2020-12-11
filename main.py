@@ -182,11 +182,10 @@ while gamePick != 9:
             isItIn = randInt in playerBet
             if isItIn == True:
                 index_solution = playerBet.index(randInt)
-                if playerBet[index_solution] == randInt:
-                    balance += betAmount[index_solution] * 36
-                    print(color.BOLD + color.GREEN + f"the number is....{randInt}\n" + color.END,
-                          color.BOLD + color.GREEN + f"!!!!\nYou won!!! {betAmount[index_solution] * 36}" + color.END,
-                          f"added to your balance.\nNew balance:\t{balance}")
+                balance += betAmount[index_solution] * 36
+                print(color.BOLD + color.GREEN + f"the number is....{randInt}\n" + color.END,
+                    color.BOLD + color.GREEN + f"!!!!\nYou won!!! {betAmount[index_solution] * 36}"
+                      + color.END, f"added to your balance.\nNew balance:\t{balance}")
             else:
                 balance -= betAmountSum
                 print(color.BOLD + color.RED + f"the number is....{randInt}\n" + color.END,
