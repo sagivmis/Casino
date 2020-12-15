@@ -194,11 +194,10 @@ class color:
     BG_WHITE = '\033[47m'
 
 
-balance_player = 100
 card = 0
 oppcard = 0
 name = input("Input your name")
-newplayer = Player(name, balance_player)
+newplayer = Player(name, 100)
 opponent = Player("OP", 9999999)
 gamePick = game_pick()
 
@@ -327,4 +326,4 @@ while gamePick != 9:
         if anotherBJ == 2:
             gamePick = game_pick()
 if gamePick == 9:
-    print(color.BOLD + color.RED + f"Your end balance: {newplayer.get_balance()}\nGoodbye." + color.END)
+    print(color.BOLD + color.RED + f"Your end balance: {newplayer.get_balance()}\nGoodbye {newplayer.name}." + color.END)
