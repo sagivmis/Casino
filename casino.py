@@ -189,6 +189,16 @@ def draw_card(cards):
         x.number = 10
     cards.append(x)
 
+def lose(player, betAmount):
+    # player.set_balance(player.get_balance() - betAmount)
+    # line above not needed because added set balance in new bet already
+    print("Im sorry :(\nBetter Luck next time!\n" + color.RED + "Your current balance:" + color.END,
+          player.get_balance())
+
+def win(player, chips_won, betAmount):
+    player.set_balance(player.get_balance() + chips_won)
+    print(color.BOLD + color.GREEN + "Congratulations!" + color.END + f"\nYou have won {betAmount}.\n"
+                                                                      f"And your balance is now {player.get_balance()}")
 
 def game_pick():  # inputs what game player wants to play
     print("Pick game:" + color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t4.Tic Tac Toe (friendly game)\n\n\t9. Exit" + color.END)
@@ -310,9 +320,9 @@ while gamePick != 9:
         opponent.draw_card()
         oppSum = sum_cards(opponent.cards)  # dealer's total
         print(
-            f"Dealer cards are:{opponent.get_card(0)}, {opponent.get_card(1)} \nAnd the sum of the dealer's cards are:{oppSum}",
-            "\n\nAnother card?", color.BOLD + color.GREEN + "\n\t1-Yes" + color.END,
-                                 color.BOLD + color.RED + "\n\t2-No" + color.END)
+            f"Dealer cards are:{opponent.get_card(0)}, {opponent.get_card(1)} \nAnd the sum of the dealer's cards are:"
+            f"{oppSum} \n\nAnother card?", color.BOLD + color.GREEN + "\n\t1-Yes" + color.END, color.BOLD + color.RED +
+                                                                                               "\n\t2-No" + color.END)
         if oppSum < 17:
             draw_dealer(opponent, opponent.cards, oppSum)
             oppSum = sum_cards(opponent.cards)
@@ -321,22 +331,18 @@ while gamePick != 9:
         while anotherCard == 1:
             newplayer.draw_card()
             cardsSum = sum_cards(newplayer.cards)
-            print(
-                f"Next cards is: {newplayer.cards[len(newplayer.cards) - 1]} and the total sum is {cardsSum}\nAnother card?\n\t",
-                color.BOLD + color.GREEN + "1-Yes" + color.END, color.BOLD + color.RED + "\n\t2-No" + color.END)
+            print(f"Next cards is: {newplayer.cards[len(newplayer.cards) - 1]} and the total sum is {cardsSum}\n"
+                  f"Another card?\n\t",color.BOLD + color.GREEN + "1-Yes" + color.END, color.BOLD + color.RED +
+                  "\n\t2-No" + color.END)
             anotherCard = int(input())
-        win = check_BJ(cardsSum, oppSum)
-        if win:
-            if count_cards(newplayer.cards) == 2 & cardsSum == 21:
+        win_check = check_BJ(cardsSum, oppSum)
+        if win_check:
+            if newplayer.cards_len() == 2 and cardsSum == 21:
                 betAmount = int(betAmount * 1.5)
                 print(color.BG_WHITE + color.RED + "BJ!!!" + color.END)
-            newplayer.set_balance(newplayer.get_balance() + betAmount)
-            print(color.BOLD + color.GREEN + "Congratulations!" + color.END + "\nYou have won ", betAmount,
-                  ".\nAnd your balance is now ", newplayer.get_balance())
+            win(newplayer, betAmount*2, betAmount)
         else:
-            newplayer.set_balance(newplayer.get_balance() - betAmount)
-            print("Im sorry :(\nBetter Luck next time!\n" + color.RED + "Your current balance:" + color.END,
-                  newplayer.get_balance())
+            lose(newplayer, betAmount)
         print("Another game?", color.BOLD + color.GREEN + "\n\t1-Yes" + color.END,
               color.BOLD + color.RED + "\n\t2-No" + color.END)
         anotherBJ = int(input())
