@@ -1,5 +1,19 @@
 import random
 
+class color:
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+    # BG Colors
+    BG_BLACK = '\033[40m'
+    BG_RED = '\033[41m'
+    BG_GREEN = '\033[42m'
+    BG_WHITE = '\033[47m'
+
 
 class Card():
     def __init__(self, number=0, shape='none'):
@@ -62,6 +76,20 @@ class Player():
             x.number = 10
         self.cards.append(x)
         self.totalcards+=1
+
+    def new_bet(self):  # input by user of bet + remote check. the func will return legit bet,
+
+        flag = False  # checking if bet is successful
+        print("How much would you like to bet?\n\n\t" + color.BOLD + f"Your balance is currently {self.balance}" + color.END)
+        betAmount = int(input())
+        while flag == False:  # but doesnt add the bet to history.
+            check = check_bet(self.balance, betAmount)
+            if check > 0:
+                flag = True
+                self.balance -= betAmount
+                return betAmount
+            else:
+                betAmount = new_bet(self.balance)
 
 
 def build_deck_n_shuffle(self):
@@ -163,7 +191,7 @@ def draw_card(cards):
 
 
 def game_pick():  # inputs what game player wants to play
-    print("Pick game:" + color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t9. Exit" + color.END)
+    print("Pick game:" + color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t4.Tic Tac Toe (friendly game)\n\n\t9. Exit" + color.END)
     game = int(input())
     return game
 
@@ -179,19 +207,6 @@ def check_BJ(player, dealer):  # true for player win false for dealer's win
         return False
 
 
-class color:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
-    # BG Colors
-    BG_BLACK = '\033[40m'
-    BG_RED = '\033[41m'
-    BG_GREEN = '\033[42m'
-    BG_WHITE = '\033[47m'
 
 
 card = 0
@@ -202,11 +217,15 @@ opponent = Player("OP", 9999999)
 gamePick = game_pick()
 
 while gamePick != 9:
+    if gamePick == 4:
+        import tictactoe
+        gamePick = game_pick()
     if gamePick == 1:
-        bet = new_bet(newplayer.get_balance())
+        #bet = new_bet(newplayer.get_balance())
         print("start game? \n1=Yes \n2=No")
         startGame = int(input())
         while startGame == 1:
+            bet = newplayer.new_bet()
             print("Your card:")
             card = random.randint(1, 13)
             print(card)
@@ -214,15 +233,16 @@ while gamePick != 9:
             print("Opponent's card:\n", oppcard)
             if card < oppcard:
                 print(color.BOLD + color.RED + "You lost", bet, "from balance." + color.END)
-                newplayer.set_balance(newplayer.get_balance() - bet)
+               # newplayer.set_balance(newplayer.get_balance() - bet)
                 print("New balance:", newplayer.get_balance())
                 print("another game?\n1=Yes\n2=No")
                 startGame = int(input())
             elif card == oppcard:
-                print(color.BOLD + color.YELLOW + "Tied !" + color.END + "\n another game?\n\t1=Yes\n\t2=No")
+                print(color.BOLD + color.YELLOW + "Tied !" + color.END + "\n Another game?\n\t1=Yes\n\t2=No")
+                newplayer.set_balance(newplayer.get_balance() + bet)
                 startGame = int(input())
             else:
-                newplayer.set_balance(newplayer.get_balance() + bet)
+                newplayer.set_balance(newplayer.get_balance() + bet*2)
                 print(color.BOLD + color.GREEN + "You win", bet, "!!" + color.END + "\nNew balance:",
                       newplayer.get_balance(),
                       "\nanother game?\n1=Yes\n2=No")
@@ -237,8 +257,7 @@ while gamePick != 9:
             playerBet = [0]
             print("Enter the number to bet on (1-36):")
             playerBet[0] = int(input())
-            betAmount[0] = new_bet(newplayer.get_balance())
-            # for multiple bets implement memory allocated array when learned which consists the bet amounts and checks each number with randInt (the number that played on roulette)
+            betAmount[0] = newplayer.new_bet()
             print("Another bet? \n\t", color.BOLD + color.GREEN + "1-Yes" + color.END,
                   color.BOLD + color.RED + "\n\t2-No" + color.END)
             anotherbet = int(input())
@@ -246,7 +265,7 @@ while gamePick != 9:
                 print("On what number? 1-36")
                 x = int(input())
                 playerBet.append(x)
-                x = new_bet(newplayer.get_balance())
+                x = newplayer.new_bet()
                 betAmount.append(x)
                 print("Another bet? \n\t", color.BOLD + color.GREEN + "1-Yes" + color.END,
                       color.BOLD + color.RED + "\n\t2-No" + color.END)
@@ -268,7 +287,7 @@ while gamePick != 9:
         if choice == 2:
             print("What color would you like to bet on?\n\t1-Black\n\t2-Red")
             playerBet = int(input())
-            betAmount = new_bet(newplayer.get_balance())
+            betAmount = newplayer.new_bet()
             colorResult = random.randint(1, 2)
             if playerBet == colorResult:
                 newplayer.set_balance(newplayer.get_balance() + betAmount)
@@ -284,7 +303,7 @@ while gamePick != 9:
     if gamePick == 3:
         newplayer.draw_card()
         newplayer.draw_card()
-        betAmount = new_bet(newplayer.get_balance())
+        betAmount = newplayer.new_bet()
         cardsSum = sum_cards(newplayer.cards)  # player's total
         print(f"Your cards are: {newplayer.get_card(0)}, {newplayer.get_card(1)} \nSum of cards: {cardsSum}")
         opponent.draw_card()
