@@ -84,13 +84,10 @@ class Player:
     def get_card(self, position):
         return self.cards[position]
 
-    def get_name(self):
-        return self.name
-
     def set_balance(self, newbal):
         self.balance = newbal
 
-    def add_to_balance(self, addition): #addition*-1 for reduction
+    def add_to_balance(self, addition):  # addition*-1 for reduction
         self.balance += addition
 
     def reset_card_array(self):
@@ -100,39 +97,25 @@ class Player:
     def draw_card(self):
         x = random.randint(1, 13)
         shape = random.randint(1, 4)
-        color = 'none'
-        if shape == 1:
-            shape = 'Heart'
-            color = 'Red'
-        if shape == 2:
-            shape = 'Spade'
-            color = 'Black'
-        if shape == 3:
-            shape = 'Diamond'
-            color = 'Red'
-        if shape == 4:
-            shape = 'Club'
-            color = 'Black'
-        x = Card(x, shape, color)
-        if x.number >= 11:
-            x.number = 10
-        self.cards.append(x)
+        colordict = {'Spade': 'Black', 'Club': 'Black', 'Heart': 'Red', 'Diamond': 'Red'}
+        newcard = Card(x, shape_shift(shape), colordict[shape_shift(shape)])
+        if newcard.number >= 11:
+            newcard.number = 10
+        self.cards.append(newcard)
         self.totalcards = self.cards_len()
 
     def new_bet(self):  # input by user of bet + remote check. the func will update the instance's balance.
 
         flag = False  # checking if bet is successful
-        print(
-            "How much would you like to bet?\n\n\t" + color.BOLD + f"Your balance is currently {self.balance}" + color.END)
-        bet_amount = int(input())
         while not flag:
+            print("How much would you like to bet?\n\n\t" + color.BOLD + f"Your balance is currently {self.balance}"
+                  + color.END)
+            bet_amount = int(input())
             check = check_bet(self.balance, bet_amount)
             if check > 0:
                 flag = True
                 self.balance -= bet_amount
                 return bet_amount
-            else:
-                bet_amount = new_bet(self.balance)
 
 
 def shape_shift(shape):
@@ -196,33 +179,11 @@ def count_cards(cards):
 
 
 def draw_dealer(dealer, cards, sumofcards):
-    print ("Generating cards for dealer.......... (must hit at-least 17)")
+    print("Generating cards for dealer.......... (must hit at-least 17)")
     while sumofcards < 17:
         dealer.draw_card()
         sumofcards = sum_cards(dealer.cards)
     return
-
-
-def deck_full(deck):
-    count = count_cards(deck)
-    if count == 52:
-        return True
-    else:
-        return False
-
-
-def new_bet(balance):  # input by user of bet + remote check. the func will return legit bet,
-    flag = False  # checking if bet is successful
-    print("How much would you like to bet?\n\n\t" + color.BOLD + f"Your balance is currently {balance}" + color.END)
-    betAmount = int(input())
-    while flag == False:  # but doesnt add the bet to history.
-        check = check_bet(balance, betAmount)
-        if check > 0:
-            flag = True
-            balance -= betAmount
-            return betAmount
-        else:
-            betAmount = new_bet(balance)
 
 
 def check_bet(balance, bet):  # checks if the bet is legit (=not higher than balance, can be equal to)
@@ -240,13 +201,15 @@ def lose(player, betAmount):
         player.get_balance())
 
 
-def win(player, chips_won, betAmount):
+def win(player, chips_won):
     player.add_to_balance(chips_won)
-    print(color.BOLD + color.GREEN + "Congratulations!" + color.END + f"\nYou have won {betAmount}.\n"
+    print(color.BOLD + color.GREEN + "Congratulations!" + color.END + f"\nYou have won {chips_won}.\n"
                                                                       f"And your balance is now {player.get_balance()}")
+
 
 def tie(player, bet):
     player.add_to_balance(bet)
+    print(color.BOLD + color.YELLOW + "Tied !" + color.END)
 
 
 def game_pick():  # inputs what game player wants to play
@@ -284,48 +247,50 @@ def show_card(card):
                 f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
     return card.shape
 
+
 card = 0
 oppcard = 0
 name = input("Input your name")
 newplayer = Player(name, 100)
 opponent = Player("OP", 9999999)
-gamePick = game_pick()
+game_picked_by_player = game_pick()
 
 if __name__ == '__main__':
-    while gamePick != 9:
-        if gamePick == 18:
+    while game_picked_by_player != 9:
+        if game_picked_by_player == 18:
             deck = build_deck_n_shuffle()
             for i in range(len(deck)):
                 show_card(deck[i])
                 print("*" * 15)
             # print(deck[i], end=" , ")
-            gamePick = game_pick()
-        if gamePick == 4:
+            game_picked_by_player = game_pick()
+        if game_picked_by_player == 4:
             run_tictactoe_game()
-            gamePick = game_pick()
-        if gamePick == 1:
-            print("start game? \n1=Yes \n2=No")
+            game_picked_by_player = game_pick()
+        if game_picked_by_player == 1:
+            print("WELCOME TO WAR \nstart game? \n\t1=Yes \n\t2=No")
             startGame = int(input())
             while startGame == 1:
                 bet = newplayer.new_bet()
                 card = Card(random.randint(1, 13), shape_shift(random.randint(1, 4)))
-                print(f"Your card: ", color.BOLD+show_card(card)+color.END)
+                print(f"Your card: ", color.BOLD + show_card(card) + color.END)
                 oppcard = Card(random.randint(1, 13), shape_shift(random.randint(1, 4)))
-                print(f"Opponent's card: ", color.BOLD+show_card(oppcard)+color.END)
+                print(f"Opponent's card: ", color.BOLD + show_card(oppcard) + color.END)
                 if card.number < oppcard.number:
                     lose(newplayer, bet)
                     print("\nanother game?\n1=Yes\n2=No")
                     startGame = int(input())
                 elif card.number == oppcard.number:
-                    print(color.BOLD + color.YELLOW + "Tied !" + color.END + "\n Another game?\n\t1=Yes\n\t2=No")
-                    newplayer.add_to_balance(bet)
+                    tie(newplayer, bet)
+                    print("Another game?\n\t1=Yes\n\t2=No")
                     startGame = int(input())
                 else:
-                    win(newplayer, bet*2, bet)
+                    win(newplayer, bet * 2)
                     print("\nanother game?\n1=Yes\n2=No")
                     startGame = int(input())
-            gamePick = game_pick()
-        if gamePick == 2:
+            game_picked_by_player = game_pick()
+        if game_picked_by_player == 2:
+            print(color.BOLD+"WELCOME TO ROULETTE"+color.END)
             randInt = random.randint(1, 36)
             print("Pick your choice \n\t1.(Numbers 1-36)\n\t2.(Colors)\n\n\t9.Exit")
             choice = int(input())
@@ -334,6 +299,8 @@ if __name__ == '__main__':
                 playerBet = [0]
                 print("Enter the number to bet on (1-36):")
                 playerBet[0] = int(input())
+                if playerBet[0] == 99:  # for check. 99 for an array that will win.
+                    playerBet = list(range(37))
                 betAmount[0] = newplayer.new_bet()
                 print("Another bet? \n\t", color.BOLD + color.GREEN + "1-Yes" + color.END,
                       color.BOLD + color.RED + "\n\t2-No" + color.END)
@@ -352,12 +319,11 @@ if __name__ == '__main__':
                 isItIn = randInt in playerBet
                 if isItIn:
                     index_solution = playerBet.index(randInt)
-                    newplayer.add_to_balance((betAmount[index_solution] * 36))
-                    print(color.BOLD + color.GREEN + f"the number is....{randInt}\n" + color.END,
-                          color.BOLD + color.GREEN + f"!!!!\nYou won!!! {betAmount[index_solution] * 36}"
-                          + color.END, f"added to your balance.\nNew balance:\t{newplayer.get_balance()}")
+                    if playerBet == list(range(37)):
+                        betAmount = list([10] * 37)  # inputs 10 as a bet for all 'tries' - also, a check
+                    print(color.BOLD + color.GREEN + f"the number is....{randInt}" + color.END)
+                    win(newplayer, (betAmount[index_solution]) * 36)
                 else:
-                    newplayer.add_to_balance((-1)*betAmountSum)
                     print(color.BOLD + color.RED + f"the number is....{randInt}\n" + color.END)
                     lose(newplayer, betAmountSum)
 
@@ -366,15 +332,19 @@ if __name__ == '__main__':
                 playerBet = int(input())
                 betAmount = newplayer.new_bet()
                 color_result = random.randint(1, 2)
+                colordict= {
+                    1: 'Black',
+                    2: 'Red'
+                }
                 if playerBet == color_result:
-                    win(newplayer, betAmount*2, betAmount)
+                    win(newplayer, betAmount * 2)
                 else:
-                    newplayer.add_to_balance((-1)*betAmount)
                     lose(newplayer, betAmount)
             if choice == 9:
-                gamePick = game_pick()
+                game_picked_by_player = game_pick()
                 continue
-        if gamePick == 3:
+        if game_picked_by_player == 3:
+            print(color.BOLD+"WELCOME TO BLACK JACK"+color.END)
             newplayer.draw_card()
             newplayer.draw_card()
             betAmount = newplayer.new_bet()
@@ -384,8 +354,8 @@ if __name__ == '__main__':
             opponent.draw_card()
             oppSum = sum_cards(opponent.cards)  # dealer's total
             print(f"Dealer cards are:{opponent.get_card(0)}, {opponent.get_card(1)} \n"
-                f"And the sum of the dealer's cards are:{oppSum} \n\nAnother card?", color.BOLD + color.GREEN +
-                "\n\t1-Yes" + color.END, color.BOLD + color.RED +"\n\t2-No" + color.END)
+                  f"And the sum of the dealer's cards are:{oppSum} \n\nAnother card?", color.BOLD + color.GREEN +
+                  "\n\t1-Yes" + color.END, color.BOLD + color.RED + "\n\t2-No" + color.END)
             if oppSum < 17:
                 draw_dealer(opponent, opponent.cards, oppSum)
                 oppSum = sum_cards(opponent.cards)
@@ -399,13 +369,13 @@ if __name__ == '__main__':
                       "\n\t2-No" + color.END)
                 anotherCard = int(input())
             if cardsSum > 21:
-                print ("BURNT!")
+                print("BURNT!")
             win_check = check_BJ(cardsSum, oppSum)
             if win_check:
                 if newplayer.cards_len() == 2 and cardsSum == 21:
                     betAmount = int(betAmount * 1.5)
                     print(color.BG_WHITE + color.RED + "BJ!!!" + color.END)
-                win(newplayer, betAmount * 2, betAmount)
+                win(newplayer, betAmount * 2)
             else:
                 lose(newplayer, betAmount)
             print("Another game?", color.BOLD + color.GREEN + "\n\t1-Yes" + color.END,
@@ -414,7 +384,7 @@ if __name__ == '__main__':
             newplayer.reset_card_array()
             opponent.reset_card_array()
             if anotherBJ == 2:
-                gamePick = game_pick()
-    if gamePick == 9:
-        print(
-            color.BOLD + color.RED + f"Your end balance: {newplayer.get_balance()}\nGoodbye {newplayer.name}." + color.END)
+                game_picked_by_player = game_pick()
+    if game_picked_by_player == 9:
+        print(color.BOLD + color.RED + f"Your end balance: {newplayer.get_balance()}\nGoodbye {newplayer.name}."
+              + color.END)
