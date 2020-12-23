@@ -1,16 +1,6 @@
 import random
 
-
-class color:
-    GREEN = '\033[92m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
-    # BG Colors
-    BG_RED = '\033[41m'
-    BG_WHITE = '\033[47m'
-
+from new_casino import color
 
 def clear_screen():
     for i in range(250):
