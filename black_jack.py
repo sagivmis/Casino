@@ -51,4 +51,4 @@ def play_bj():
         cfg.new_player.reset_card_array()
         cfg.opponent.reset_card_array()
         if another_bj == 2:
-            return
+            return 
