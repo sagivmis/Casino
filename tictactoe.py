@@ -2,6 +2,7 @@ import random
 
 import casino
 
+
 def clear_screen():
     for i in range(250):
         print()
@@ -80,15 +81,15 @@ def display_board(board, switch, player=None):  # switch = 1 for win 0 for in-ga
     if player:
         print(f"Current marker's turn: {player}")
     for i in range(1, 4):
-        print(casino.color.BOLD + casino.color.GREEN + f"{board[i]}" + casino.color.END, end=" | ")
+        print(casino.Color.BOLD + casino.Color.GREEN + f"{board[i]}" + casino.Color.END, end=" | ")
     print()
     print("___________")
     for i in range(4, 7):
-        print(casino.color.BOLD + casino.color.GREEN + f"{board[i]}" + casino.color.END, end=" | ")
+        print(casino.Color.BOLD + casino.Color.GREEN + f"{board[i]}" + casino.Color.END, end=" | ")
     print()
     print("___________")
     for i in range(7, 10):
-        print(casino.color.BOLD + casino.color.GREEN + f"{board[i]}" + casino.color.END, end=" | ")
+        print(casino.Color.BOLD + casino.Color.GREEN + f"{board[i]}" + casino.Color.END, end=" | ")
     print()
     print("___________")
 
@@ -96,7 +97,7 @@ def display_board(board, switch, player=None):  # switch = 1 for win 0 for in-ga
 def run_tictactoe_game():
     score = [0, 0]
     tie = 0
-    print(casino.color.BOLD + "Welcome to TIC TAC TOE" + casino.color.END)
+    print(casino.Color.BOLD + "Welcome to TIC TAC TOE" + casino.Color.END)
     while True:
         print(f"The SCORE is:\n\tPLAYER 1: {score[0]}\n\tPLAYER 2: {score[1]}\n\t\tNumber of ties: {tie}")
         game_board = ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
@@ -109,7 +110,6 @@ def run_tictactoe_game():
             player2 = 'O'
         if player1 == 'O':
             player2 = 'X'
-
 
         turn = choose_first()
         print(f"Player {turn} will go first.")

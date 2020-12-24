@@ -1,6 +1,7 @@
 from casino import Player
 new_player = Player("Player",100)
 opponent = Player("OP", 99999)
+legit_input = False
 
 colordict = {'Spade': 'Black', 'Club': 'Black', 'Heart': 'Red', 'Diamond': 'Red'}
 suits = ('Heart', 'Diamond', 'Spade', 'Club')

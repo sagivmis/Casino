@@ -8,7 +8,7 @@ from tictactoe import run_tictactoe_game
 from war import run_war
 
 
-class color:
+class Color:
     BLUE = '\033[94m'
     GREEN = '\033[92m'
     YELLOW = '\033[93m'
@@ -98,7 +98,7 @@ class Player:
         self.name = name
         self.balance = balance
         self.cards = []
-        self.totalcards = 0
+        self.total_cards = 0
         self.hand = Hand()
         self.bet = 0
 
@@ -140,14 +140,14 @@ class Player:
         if newcard.number >= 11:
             newcard.number = 10
         self.cards.append(newcard)
-        self.totalcards = self.cards_len()
+        self.total_cards = self.cards_len()
 
     def new_bet(self):  # input by user of bet + remote check. the func will update the instance's balance.
 
         flag = False  # checking if bet is successful
         while not flag:
-            print("How much would you like to bet?\n\n\t" + color.BOLD + f"Your balance is currently {self.balance}"
-                  + color.END)
+            print("How much would you like to bet?\n\n\t" + Color.BOLD + f"Your balance is currently {self.balance}"
+                  + Color.END)
             bet_amount = int(input())
             check = check_bet(self.balance, bet_amount)
             if check > 0:
@@ -157,17 +157,17 @@ class Player:
 
     def lose(self, bet_amount):
         print(
-            f"Im sorry :(\nYou lost {bet_amount} $, better luck next time!\n" + color.RED + "Your current balance:" + color.END,
+            f"Im sorry :(\nYou lost {bet_amount} $, better luck next time!\n" + Color.RED + "Your current balance:" + Color.END,
             self.get_balance())
 
     def win(self, chips_won):
         self.add_to_balance(chips_won)
-        print(color.BOLD + color.GREEN + "Congratulations!" + color.END + f"\nYou have won {chips_won} $!!\n"
+        print(Color.BOLD + Color.GREEN + "Congratulations!" + Color.END + f"\nYou have won {chips_won} $!!\n"
                                                                           f"Your balance is now {self.get_balance()}")
 
     def tie(self, bet):
         self.add_to_balance(bet)
-        print(color.BOLD + color.YELLOW + "Tied !" + color.END)
+        print(Color.BOLD + Color.YELLOW + "Tied !" + Color.END)
 
 
 class Hand:
@@ -271,7 +271,7 @@ def check_bet(balance, bet):  # checks if the bet is legit (=not higher than bal
 
 def game_pick():  # inputs what game player wants to play
     print(
-        "Pick game:" + color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t4.Tic Tac Toe (friendly game)\n\n\t9. Exit" + color.END)
+        "Pick game:" + Color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t4.Tic Tac Toe (friendly game)\n\n\t9. Exit" + Color.END)
     game = int(input())
     return game
 
@@ -291,10 +291,10 @@ def show_card(card):
     if card.color == 'Red':
         if card.get_card() == 10:
             print(
-                color.RED + f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + color.END)
+                Color.RED + f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
         else:
             print(
-                color.RED + f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + color.END)
+                Color.RED + f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
     else:
         if card.get_card() == 10:
             print(
@@ -304,42 +304,53 @@ def show_card(card):
                 f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
     return card.shape
 
-import argparse
+
+def wrong_input():
+    game_picked = 0
+    if game_picked != 9:
+        cfg.legit_input = False
+        while not cfg.legit_input:
+            print("WRONG INPUT")
+            game_picked = game_pick()
+            if game_picked in [1, 2, 3, 4, 9]:
+                cfg.legit_input = True
+    return game_picked
 
 
 if __name__ == '__main__':
-    # required arg
     logging.debug("Starting Casino")
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--name', type=str,
-                        help='Insert your name')
-
-    args = parser.parse_args()
-    # name = input("Input your name")
-    cfg.new_player.name = args.name
+    name = input("Input your name")
+    cfg.new_player.name = name
 
     game_picked_by_player = game_pick()
     playing_deck = Deck()
-
+    
     while game_picked_by_player != 9:
+        while game_picked_by_player in [1, 2, 3, 4]:
 
-        if game_picked_by_player == 1:
-            run_war()
-            game_picked_by_player = game_pick()
+            if game_picked_by_player == 1:
+                run_war()
+                game_picked_by_player = game_pick()
 
-        if game_picked_by_player == 2:
-            roulette()
-            game_picked_by_player = game_pick()
+            if game_picked_by_player == 2:
+                roulette()
+                game_picked_by_player = game_pick()
 
-        if game_picked_by_player == 3:
-            play_bj()
-            game_picked_by_player = game_pick()
+            if game_picked_by_player == 3:
+                play_bj()
+                game_picked_by_player = game_pick()
 
-        if game_picked_by_player == 4:
-            run_tictactoe_game()
-            game_picked_by_player = game_pick()
+            if game_picked_by_player == 4:
+                run_tictactoe_game()
+                game_picked_by_player = game_pick()
 
+        else:
+
+            if game_picked_by_player != 9:
+                game_picked_by_player = wrong_input()
+            else:
+                break
     if game_picked_by_player == 9:
         print(
-            color.BOLD + color.RED + f"Your end balance: {cfg.new_player.get_balance()}\nGoodbye {cfg.new_player.name}."
-            + color.END)
+            Color.BOLD + Color.RED + f"Your end balance: {cfg.new_player.get_balance()}\nGoodbye {cfg.new_player.name}."
+            + Color.END)
