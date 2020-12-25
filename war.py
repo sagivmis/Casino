@@ -46,12 +46,12 @@ def run_war():
     #
     import cfg
     import casino
-    from casino import Color
+    from cfg import Color
     ##
 
     # UTILITIES:
     #
-    from casino import show_card
+    from cfg import show_card
     ##
 
     deck = casino.Deck()

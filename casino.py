@@ -1,12 +1,6 @@
-import logging
+
 import random
-
 import cfg
-from black_jack import play_bj
-from roulette import roulette
-from tictactoe import run_tictactoe_game
-from war import run_war
-
 
 class Color:
     BLUE = '\033[94m'
@@ -136,7 +130,7 @@ class Player:
         x = random.randint(1, 13)
         shape = random.randint(1, 4)
         # cfg.colordict = {'Spade': 'Black', 'Club': 'Black', 'Heart': 'Red', 'Diamond': 'Red'}
-        newcard = Card(x, shape_shift_from_number(shape), cfg.colordict[shape_shift_from_number(shape)])
+        newcard = Card(x, cfg.shape_shift_from_number(shape), cfg.colordict[cfg.shape_shift_from_number(shape)])
         if newcard.number >= 11:
             newcard.number = 10
         self.cards.append(newcard)
@@ -149,7 +143,7 @@ class Player:
             print("How much would you like to bet?\n\n\t" + Color.BOLD + f"Your balance is currently {self.balance}"
                   + Color.END)
             bet_amount = int(input())
-            check = check_bet(self.balance, bet_amount)
+            check = cfg.check_bet(self.balance, bet_amount)
             if check > 0:
                 flag = True
                 self.balance -= bet_amount
@@ -206,151 +200,116 @@ class Hand:
         for i in range(self.cards_len()):
             self.cards.pop()
 
-
-def shape_shift_from_number(shape):
-    shapes = {
-        1: 'Heart',
-        2: 'Spade',
-        3: 'Diamond',
-        4: 'Club'
-    }
-
-    return shapes[shape]
-
-
-def build_deck_n_shuffle():  # working
-    deck = []
-    #    colordict = {'Spade': 'Black', 'Club': 'Black', 'Heart': 'Red', 'Diamond': 'Red'}
-    for shape in range(1, 5):
-        for card in range(1, 14):
-            newcard = Card(card, shape_shift_from_number(shape), cfg.colordict[shape_shift_from_number(shape)])
-            deck.append(newcard)
-            print(newcard)
-    random.shuffle(deck)
-    print("Successfuly shuffled new deck.")
-    return deck
-
-
-def sum_list(lst):
-    total = 0
-    for val in lst:
-        total += val
-    return total
-
-
-def check_war(player, dealer):
-    if player > dealer:
-        return True
-    elif player < dealer:
-        return False
-
-
-def sum_cards(cards):
-    sum = 0
-    for i in cards:
-        sum += i.number
-    return sum
-
-
-def draw_dealer(dealer, cards, sumofcards):
-    print("Generating cards for dealer.......... (must hit at-least 17)")
-    while sumofcards < 17:
-        dealer.draw_random_card()
-        sumofcards = sum_cards(dealer.cards)
-    return
-
-
-def check_bet(balance, bet):  # checks if the bet is legit (=not higher than balance, can be equal to)
-    # and if so returns True
-    if bet > balance:
-        print(f"Bet can't exceed max balance.\n please re-enter your bet. Your current balance is {balance}")
-    else:
-        return bet
-    return 0
-
-
-def game_pick():  # inputs what game player wants to play
-    print(
-        "Pick game:" + Color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t4.Tic Tac Toe (friendly game)\n\n\t9. Exit" + Color.END)
-    game = int(input())
-    return game
-
-
-def check_BJ(player, dealer):  # true for player win false for dealer's win
-    if dealer > 21:
-        return True
-    if player > 21:
-        return False
-    if player > dealer:
-        return True
-    else:
-        return False
-
-
-def show_card(card):
-    if card.color == 'Red':
-        if card.get_card() == 10:
-            print(
-                Color.RED + f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
-        else:
-            print(
-                Color.RED + f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
-    else:
-        if card.get_card() == 10:
-            print(
-                f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
-        else:
-            print(
-                f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
-    return card.shape
-
-
-def wrong_input():
-    game_picked = 0
-    if game_picked != 9:
-        cfg.legit_input = False
-        while not cfg.legit_input:
-            print("WRONG INPUT")
-            game_picked = game_pick()
-            if game_picked in [1, 2, 3, 4, 9]:
-                cfg.legit_input = True
-    return game_picked
+#
+# def shape_shift_from_number(shape):
+#     shapes = {
+#         1: 'Heart',
+#         2: 'Spade',
+#         3: 'Diamond',
+#         4: 'Club'
+#     }
+#
+#     return shapes[shape]
+#
+#
+# def build_deck_n_shuffle():  # working
+#     deck = []
+#     #    colordict = {'Spade': 'Black', 'Club': 'Black', 'Heart': 'Red', 'Diamond': 'Red'}
+#     for shape in range(1, 5):
+#         for card in range(1, 14):
+#             newcard = Card(card, shape_shift_from_number(shape), cfg.colordict[shape_shift_from_number(shape)])
+#             deck.append(newcard)
+#             print(newcard)
+#     random.shuffle(deck)
+#     print("Successfuly shuffled new deck.")
+#     return deck
+#
+#
+# def sum_list(lst):
+#     total = 0
+#     for val in lst:
+#         total += val
+#     return total
+#
+#
+# def check_war(player, dealer):
+#     if player > dealer:
+#         return True
+#     elif player < dealer:
+#         return False
+#
+#
+# def sum_cards(cards):
+#     sum = 0
+#     for i in cards:
+#         sum += i.number
+#     return sum
+#
+#
+# def draw_dealer(dealer, cards, sumofcards):
+#     print("Generating cards for dealer.......... (must hit at-least 17)")
+#     while sumofcards < 17:
+#         dealer.draw_random_card()
+#         sumofcards = sum_cards(dealer.cards)
+#     return
+#
+#
+# def check_bet(balance, bet):  # checks if the bet is legit (=not higher than balance, can be equal to)
+#     # and if so returns True
+#     if bet > balance:
+#         print(f"Bet can't exceed max balance.\n please re-enter your bet. Your current balance is {balance}")
+#     else:
+#         return bet
+#     return 0
+#
+#
+# def game_pick():  # inputs what game player wants to play
+#     print(
+#         "Pick game:" + Color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\n\t4.Tic Tac Toe (friendly game)\n\n\t9. Exit" + Color.END)
+#     game = int(input())
+#     return game
+#
+#
+# def check_BJ(player, dealer):  # true for player win false for dealer's win
+#     if dealer > 21:
+#         return True
+#     if player > 21:
+#         return False
+#     if player > dealer:
+#         return True
+#     else:
+#         return False
+#
+#
+# def show_card(card):
+#     if card.color == 'Red':
+#         if card.get_card() == 10:
+#             print(
+#                 Color.RED + f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
+#         else:
+#             print(
+#                 Color.RED + f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
+#     else:
+#         if card.get_card() == 10:
+#             print(
+#                 f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
+#         else:
+#             print(
+#                 f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
+#     return card.shape
+#
+#
+# def wrong_input():
+#     game_picked = 0
+#     if game_picked != 9:
+#         cfg.legit_input = False
+#         while not cfg.legit_input:
+#             print("WRONG INPUT")
+#             game_picked = game_pick()
+#             if game_picked in [1, 2, 3, 4, 9]:
+#                 cfg.legit_input = True
+#     return game_picked
 
 
 if __name__ == '__main__':
-    logging.debug("Starting Casino")
-    name = input("Input your name")
-    cfg.new_player.name = name
-
-    game_picked_by_player = game_pick()
-    playing_deck = Deck()
-    
-    while game_picked_by_player != 9:
-        while game_picked_by_player in [1, 2, 3, 4]:
-
-            if game_picked_by_player == 1:
-                run_war()
-                game_picked_by_player = game_pick()
-
-            if game_picked_by_player == 2:
-                roulette()
-                game_picked_by_player = game_pick()
-
-            if game_picked_by_player == 3:
-                play_bj()
-                game_picked_by_player = game_pick()
-
-            if game_picked_by_player == 4:
-                run_tictactoe_game()
-                game_picked_by_player = game_pick()
-
-        else:
-
-            if game_picked_by_player != 9:
-                game_picked_by_player = wrong_input()
-            else:
-                break
-    if game_picked_by_player == 9:
-        print(
-            Color.BOLD + Color.RED + f"Your end balance: {cfg.new_player.get_balance()}\nGoodbye {cfg.new_player.name}."
-            + Color.END)
+    cfg.main_menu()

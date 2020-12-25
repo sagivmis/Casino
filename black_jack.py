@@ -4,12 +4,12 @@ def play_bj():
     # IMPORTS
     ## CLASSES:
     import cfg
-    from casino import Color
+    from cfg import Color
 
     ## UTILITIES:
-    from casino import sum_cards
-    from casino import draw_dealer
-    from casino import check_BJ
+    from cfg import sum_cards
+    from cfg import draw_dealer
+    from cfg import check_BJ
 
     another_bj = 1
     while another_bj == 1:

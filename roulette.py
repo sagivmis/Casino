@@ -1,13 +1,12 @@
-
 def roulette():
     # IMPORTS:
     import random
-    from casino import Color
-    from casino import sum_list
+    from cfg import Color
+    from cfg import sum_list
     import cfg
     ##
 
-    game_on=True
+    game_on = True
     while game_on:
         print(Color.BOLD + "WELCOME TO ROULETTE" + Color.END)
         randInt = random.randint(1, 36)
@@ -51,7 +50,7 @@ def roulette():
             playerBet = int(input())
             bet_amount = cfg.new_player.new_bet()
             color_result = random.randint(1, 2)
-            color_diction={1:'Black', 2:'Red'}
+            color_diction = {1: 'Black', 2: Color.RED+'Red'+Color.END}
             if playerBet == color_result:
                 print(f"The color is... {color_diction[color_result]}")
                 cfg.new_player.win(bet_amount * 2)
