@@ -1,7 +1,6 @@
 import random
 import cfg
 
-
 class Color:
     BLUE = '\033[94m'
     GREEN = '\033[92m'
@@ -31,8 +30,9 @@ class Deck:
         i = 0
         string = ""
         for _ in cfg.suits:
+            string+='\n'
             for _ in cfg.ranks:
-                string += f"{self.deck[i]}\t"
+                string += f"{self.deck[i]},\t"
                 i += 1
         return string
 
@@ -189,8 +189,9 @@ class Hand:
                 self.value -= 10
 
     def draw_card_from_deck(self, played_deck):
-        temp_card = played_deck.deck.pop()
+        temp_card=0
         if played_deck.deck_len() > 0:
+            temp_card = played_deck.deck.pop()
             self.cards.append(temp_card)
         else:
             print("No more cards in deck")
