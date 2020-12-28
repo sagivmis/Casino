@@ -33,30 +33,47 @@ ranks = ('Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
 values = {'Ace': 1, 'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8, 'Nine': 9, 'Ten': 10,
           'Jack': 10, 'Queen': 10, 'King': 10}
 
+
 def sorts(line):
-    line_fields=line.strip().split(',')
+    line_fields = line.strip().split(',')
     amount = int(line_fields[1])
     return amount
 
+
+def save_game():
+    with open("save.csv", "w") as fp:
+        csv_writer = csv.writer(fp)
+        csv_writer.writerow([new_player.name, new_player.balance])
+    print("SAVED GAME PROGRESS")
+
+
+def load_game():
+    with open("save.csv", "r") as fp:
+        csv_reader = csv.reader(fp)
+        data = fp.readlines()
+        newdata = data[0].split(',')
+        new_player.name = newdata[0]
+        new_player.balance = int(newdata[1])
+    print("LOADED")
+    print(f"Welcome back {new_player.name}\nYour balance is: {new_player.balance}\nGOOD LUCK")
+
+
 def show_high_score():
-    # f = open('high_score.csv', mode='r', newline='')
-    # csv_file = csv.reader(f)
-    # data_lines = list(csv_file)
-    # print(data_lines)
-    # f.close()
-    print("*"*50)
+    print("*" * 50)
     print('██████████████████████████████████████████████████')
     print('█─█─█▄─▄█─▄▄▄▄█─█─███─▄▄▄▄█─▄▄▄─█─▄▄─█▄─▄▄▀█▄─▄▄─█')
     print('█─▄─██─██─██▄─█─▄─███▄▄▄▄─█─███▀█─██─██─▄─▄██─▄█▀█')
     print('▀▄▀▄▀▄▄▄▀▄▄▄▄▄▀▄▀▄▀▀▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▄▄▀▄▄▀▄▄▄▄▄▀')
-    print("*"*50)
-    with open('high_score.csv','r') as fp:
+    print("*" * 50)
+    with open('high_score.csv', 'r') as fp:
         data = fp.readlines()
         data.sort(key=sorts, reverse=True)
-        print(Color.BOLD+"Name\t\tBalance"+Color.END)
+        print(Color.BOLD + "   Name\t\t\tBalance" + Color.END)
+        i = 1
         for line in data:
             newline = line.split(',')
-            print(f"{newline[0]}\t\t{newline[1]}")
+            print(f"{i}. {newline[0]} {newline[1]}")
+            i += 1
 
 
 def save_score():
@@ -67,23 +84,33 @@ def save_score():
     print("Saved successfully.\n")
 
 
+def saving_loading_menu():
+    while True:
+        print(Color.BOLD + f"Enter desired action:\n" + Color.END)
+        player_choice = input(f"\t-save - To save current game (will overwrite previous saved game.\n\t-load - "
+                              f"To load previously saved game")
+        while player_choice not in ['save', 'load']:
+            player_choice = input("WRONG INPUT!\n\t-save - To save current game (will overwrite previous saved game."
+                                  "\n\t-load - To load previously saved game")
+        # while player_choice in ['save', 'load']:
+        if player_choice == 'save':
+            save_game()
+        if player_choice == 'load':
+            load_game()
+        break
+
+
 def main_menu():
     logging.debug("Starting Casino")
-    name = input("Input your name")
+    temp_name = input("Input your name:\n\tmax chars- 12.\n\tmin chars- 1.\n")
+    name = fix_name(temp_name)
     new_player.name = name
-
+    print(f"Hello {new_player.name}, Your starting balance is 100.\n Good Luck!\n")
     game_picked_by_player = game_pick()
     playing_deck = Deck()
 
     while game_picked_by_player != 9:
-        while game_picked_by_player in [1, 2, 3, 4, 7, 8]:
-            if game_picked_by_player == 7:
-                save_score()
-                game_picked_by_player = game_pick()
-
-            if game_picked_by_player == 8:
-                show_high_score()
-                game_picked_by_player = game_pick()
+        while game_picked_by_player in [1, 2, 3, 4, 6, 7, 8]:
 
             if game_picked_by_player == 1:
                 run_war()
@@ -101,6 +128,17 @@ def main_menu():
                 run_tictactoe_game()
                 game_picked_by_player = game_pick()
 
+            if game_picked_by_player == 6:
+                save_score()
+                game_picked_by_player = game_pick()
+
+            if game_picked_by_player == 7:
+                show_high_score()
+                game_picked_by_player = game_pick()
+
+            if game_picked_by_player == 8:
+                saving_loading_menu()
+                game_picked_by_player = game_pick()
         else:
 
             if game_picked_by_player != 9:
@@ -109,7 +147,7 @@ def main_menu():
                 break
     if game_picked_by_player == 9:
         print(
-            Color.BOLD + Color.RED + f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}."
+            Color.BOLD + Color.RED + f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}"
             + Color.END)
 
 
@@ -176,8 +214,9 @@ def check_bet(balance, bet):  # checks if the bet is legit (=not higher than bal
 
 
 def game_pick():  # inputs what game player wants to play
-    print(
-        "Pick game:" + Color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\t4. Tic Tac Toe (friendly game)\n\t\t7. Save Score\n\t\t8. Show high score\n\n\t\t\t9. Exit" + Color.END)
+    print("MAIN MENU:" + Color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\t4. Tic Tac Toe (friendly game)"
+                                      "\n\t\t\t6. Save Score\n\t\t\t7. Show high score\n\n\t\t\t\t\t\t\t"
+                                      "8. Save\Load menu\n\t\t\t\t\t\t\t9. Exit" + Color.END)
     game = int(input())
     return game
 
@@ -218,6 +257,21 @@ def wrong_input():
         while not legit_input:
             print("WRONG INPUT")
             game_picked = game_pick()
-            if game_picked in [1, 2, 3, 4, 9, 7, 8]:
+            if game_picked in [1, 2, 3, 4, 6, 7, 8]:
                 legit_input = True
     return game_picked
+
+
+def fix_name(name):
+    length = len(name)
+    if length > 12 or length < 1:
+        while True:
+            print("WRONG INPUT\n\tmax chars- 12.\n\tmin chars-1.")
+            name_in = input("Input your name:")
+            if len(name_in) > 1 and len(name_in) < 12:
+                name = name_in
+                length = len(name)
+                break
+    num_of_spaces = 12 - length
+    new_name = name + (" " * num_of_spaces)
+    return new_name
