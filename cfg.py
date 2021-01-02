@@ -3,6 +3,7 @@
 import send2trash
 import csv
 import os
+import pandas as pd
 
 # CLASSES:
 from casino import Player
@@ -41,21 +42,45 @@ def sorts(line):
 
 
 def save_game():
-    with open("save.csv", "w") as fp:
+    # with open("save.csv","r") as f:
+    #     csv_read=csv.reader(f)
+    #     data = f.readlines()
+    #     i=0
+    #     saved_name = new_player.name
+    #     for row in data:
+    #         newdata=data[i].split(',')
+    #         if newdata[0] == saved_name:
+    #             data[i]=f"{saved_name},{new_player.balance}"
+    #             print("SAVED GAME PROGRESS")
+    #             return
+    #         i+=1
+    with open("save.csv", "a", newline='') as fp:
         csv_writer = csv.writer(fp)
         csv_writer.writerow([new_player.name, new_player.balance])
-    print("SAVED GAME PROGRESS")
 
 
-def load_game():
+def load_game(load_name):
     with open("save.csv", "r") as fp:
         csv_reader = csv.reader(fp)
         data = fp.readlines()
-        newdata = data[0].split(',')
-        new_player.name = newdata[0]
-        new_player.balance = int(newdata[1])
-    print("LOADED")
-    print(f"Welcome back {new_player.name}\nYour balance is: {new_player.balance}\nGOOD LUCK")
+        print(data)
+        i=0
+        for row in data:
+            newdata = data[i].split(',')
+            print(newdata)
+            if newdata[0] == load_name:
+                new_player.name = newdata[0]
+                new_player.balance = int(newdata[1])
+                print("LOADED")
+                print(f"Welcome back {new_player.name}\nYour balance is: {new_player.balance}\nGOOD LUCK")
+                return
+            else:
+                i += 1
+
+        # new_player.name = newdata[0]
+        # new_player.balance = int(newdata[1])
+        print("Couldn't find save")
+
 
 
 def show_high_score():
@@ -96,7 +121,9 @@ def saving_loading_menu():
         if player_choice == 'save':
             save_game()
         if player_choice == 'load':
-            load_game()
+            loading_name=input("what name of save?")
+            new_loading_name=fix_name(loading_name)
+            load_game(new_loading_name)
         break
 
 
@@ -105,7 +132,7 @@ def main_menu():
     temp_name = input("Input your name:\n\tmax chars- 12.\n\tmin chars- 1.\n")
     name = fix_name(temp_name)
     new_player.name = name
-    print(f"Hello {new_player.name}, Your starting balance is 100.\n Good Luck!\n")
+    print(f"Hello {new_player.name}\nYour starting balance is 100.\nGood Luck!\n")
     game_picked_by_player = game_pick()
     playing_deck = Deck()
 
