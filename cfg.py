@@ -1,9 +1,6 @@
 ##  IMPORTS
 # MODULES:
-import send2trash
 import csv
-import os
-import pandas as pd
 
 # CLASSES:
 from casino import Player
@@ -14,7 +11,6 @@ from casino import Hand
 # UTILITIES:
 import logging
 import random
-from casino import Color
 
 # MAIN MENU FUNCTIONS:
 from black_jack import play_bj
@@ -93,7 +89,7 @@ def show_high_score():
     with open('high_score.csv', 'r') as fp:
         data = fp.readlines()
         data.sort(key=sorts, reverse=True)
-        print(Color.BOLD + "   Name\t\t\tBalance" + Color.END)
+        print("   Name\t\t\tBalance")
         i = 1
         for line in data:
             newline = line.split(',')
@@ -111,11 +107,11 @@ def save_score():
 
 def saving_loading_menu():
     while True:
-        print(Color.BOLD + f"Enter desired action:\n" + Color.END)
+        print(f"Enter desired action:\n")
         player_choice = input(f"\t-save - To save current game (will overwrite previous saved game.\n\t-load - "
                               f"To load previously saved game")
         while player_choice not in ['save', 'load']:
-            player_choice = input("WRONG INPUT!\n\t-save - To save current game (will overwrite previous saved game."
+            player_choice = input(f"WRONG INPUT!\n\t-save - To save current game (will overwrite previous saved game."
                                   "\n\t-load - To load previously saved game")
         # while player_choice in ['save', 'load']:
         if player_choice == 'save':
@@ -135,7 +131,6 @@ def main_menu():
     print(f"Hello {new_player.name}\nYour starting balance is 100.\nGood Luck!\n")
     game_picked_by_player = game_pick()
     playing_deck = Deck()
-
     while game_picked_by_player != 9:
         while game_picked_by_player in [1, 2, 3, 4, 6, 7, 8]:
 
@@ -173,9 +168,7 @@ def main_menu():
             else:
                 break
     if game_picked_by_player == 9:
-        print(
-            Color.BOLD + Color.RED + f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}"
-            + Color.END)
+        print(f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}")  
 
 
 def shape_shift_from_number(shape):
@@ -191,7 +184,6 @@ def shape_shift_from_number(shape):
 
 def build_deck_n_shuffle():  # working
     deck = []
-    #    colordict = {'Spade': 'Black', 'Club': 'Black', 'Heart': 'Red', 'Diamond': 'Red'}
     for shape in range(1, 5):
         for card in range(1, 14):
             newcard = Card(card, shape_shift_from_number(shape), colordict[shape_shift_from_number(shape)])
@@ -240,12 +232,18 @@ def check_bet(balance, bet):  # checks if the bet is legit (=not higher than bal
     return 0
 
 
-def game_pick():  # inputs what game player wants to play
-    print("MAIN MENU:" + Color.BOLD + "\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\t4. Tic Tac Toe (friendly game)"
-                                      "\n\t\t\t6. Save Score\n\t\t\t7. Show high score\n\n\t\t\t\t\t\t\t"
-                                      "8. Save\Load menu\n\t\t\t\t\t\t\t9. Exit" + Color.END)
-    game = int(input())
-    return game
+def game_pick():# inputs what game player wants to play
+    game = 0
+    try:
+        print(f"MAIN MENU:\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\t4. Tic Tac Toe (friendly game)"
+                                          "\n\t\t\t6. Save Score\n\t\t\t7. Show high score\n\n\t\t\t\t\t\t\t"
+                                          "8. Save\Load menu\n\t\t\t\t\t\t\t9. Exit")
+        game = int(input())
+    except:
+        print(f"WRONG INPUT\nPlease provide a choice by numbers 0-9 only.")
+        game = game_pick()
+    finally:
+        return game
 
 
 def check_BJ(player, dealer):  # true for player win false for dealer's win
@@ -262,18 +260,18 @@ def check_BJ(player, dealer):  # true for player win false for dealer's win
 def show_card(card):
     if card.color == 'Red':
         if card.get_card() == 10:
-            print(
-                Color.RED + f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
+            print(f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  "
+                  f"|\n|{card.get_card()}\t  |\n -----")
         else:
-            print(
-                Color.RED + f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----" + Color.END)
+            print(f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  "
+                  f"|\n|{card.get_card()}\t  |\n -----")
     else:
         if card.get_card() == 10:
-            print(
-                f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
+            print(f" -----\n|\t{card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  "
+                  f"|\n|{card.get_card()}\t  |\n -----")
         else:
-            print(
-                f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  |\n|{card.get_card()}\t  |\n -----")
+            print(f" -----\n|\t {card.get_card()}|\n|\t {card.get_shape()}|\n|{card.get_shape()}\t  "
+                  f"|\n|{card.get_card()}\t  |\n -----")
     return card.shape
 
 
@@ -293,8 +291,8 @@ def fix_name(name):
     length = len(name)
     if length > 12 or length < 1:
         while True:
-            print("WRONG INPUT\n\tmax chars- 12.\n\tmin chars-1.")
-            name_in = input("Input your name:")
+            print(f"WRONG INPUT\n\tmax chars- 12.\n\tmin chars-1.")
+            name_in = input(f"Input your name:")
             if len(name_in) > 1 and len(name_in) < 12:
                 name = name_in
                 length = len(name)
