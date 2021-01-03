@@ -4,7 +4,7 @@ import casino
 
 
 def clear_screen():
-    for i in range(250):
+    for i in range(250): 
         print()
 
 
