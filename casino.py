@@ -1,6 +1,7 @@
 import random
 import cfg
 
+
 class Color:
     BLUE = '\033[94m'
     GREEN = '\033[92m'
@@ -30,7 +31,7 @@ class Deck:
         i = 0
         string = ""
         for _ in cfg.suits:
-            string+='\n'
+            string += '\n'
             for _ in cfg.ranks:
                 string += f"{self.deck[i]},\t"
                 i += 1
@@ -50,16 +51,9 @@ class Card:
         self.color = color
 
     def __str__(self):
-        num = self.number
-        if num == 13:
-            num = 'K'
-        if num == 12:
-            num = 'Q'
-        if num == 11:
-            num = 'J'
-        if num == 1:
-            num = 'A'
-        return f"{num} of {self.shape}s"
+        numdict = {13: 'K', 12: 'Q', 11: 'J', 1: 'A',
+                   2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: '10'}
+        return f"{numdict[self.number]} of {self.shape}s"
 
     def get_shape(self):
         if self.shape == 'Spade':
@@ -189,7 +183,7 @@ class Hand:
                 self.value -= 10
 
     def draw_card_from_deck(self, played_deck):
-        temp_card=0
+        temp_card = 0
         if played_deck.deck_len() > 0:
             temp_card = played_deck.deck.pop()
             self.cards.append(temp_card)
@@ -204,3 +198,5 @@ class Hand:
 
 if __name__ == '__main__':
     cfg.main_menu()
+
+# ask to save before quit?
