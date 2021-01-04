@@ -1,22 +1,6 @@
 import random
 import cfg
 
-
-class Color:
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
-    # BG Colors
-    BG_BLACK = '\033[40m'
-    BG_RED = '\033[41m'
-    BG_GREEN = '\033[42m'
-    BG_WHITE = '\033[47m'
-
-
 class Deck:
 
     def __init__(self):
@@ -134,8 +118,7 @@ class Player:
 
         flag = False  # checking if bet is successful
         while not flag:
-            print("How much would you like to bet?\n\n\t" + Color.BOLD + f"Your balance is currently {self.balance}"
-                  + Color.END)
+            print(f"How much would you like to bet?\n\n\tYour balance is currently {self.balance}")
             bet_amount = int(input())
             check = cfg.check_bet(self.balance, bet_amount)
             if check > 0:
@@ -144,18 +127,16 @@ class Player:
                 return bet_amount
 
     def lose(self, bet_amount):
-        print(
-            f"Im sorry :(\nYou lost {bet_amount} $, better luck next time!\n" + Color.RED + "Your current balance:" + Color.END,
+        print(f"Im sorry :(\nYou lost {bet_amount} $, better luck next time!\nYour current balance:",
             self.get_balance())
 
     def win(self, chips_won):
         self.add_to_balance(chips_won)
-        print(Color.BOLD + Color.GREEN + "Congratulations!" + Color.END + f"\nYou have won {chips_won} $!!\n"
-                                                                          f"Your balance is now {self.get_balance()}")
+        print(f"Congratulations!\nYou have won {chips_won} $!!\nYour balance is now {self.get_balance()}")
 
     def tie(self, bet):
         self.add_to_balance(bet)
-        print(Color.BOLD + Color.YELLOW + "Tied !" + Color.END)
+        print("Tied !")
 
 
 class Hand:

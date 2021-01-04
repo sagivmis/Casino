@@ -45,7 +45,7 @@ def save_game():
     #     saved_name = new_player.name
     #     for row in data:
     #         newdata=data[i].split(',')
-    #         if newdata[0] == saved_name:
+    #         if newdata[0] == saved_name: -- open a write instance of save and change the specific lines
     #             data[i]=f"{saved_name},{new_player.balance}"
     #             print("SAVED GAME PROGRESS")
     #             return
@@ -168,7 +168,7 @@ def main_menu():
             else:
                 break
     if game_picked_by_player == 9:
-        print(f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}")  
+        print(f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}")
 
 
 def shape_shift_from_number(shape):

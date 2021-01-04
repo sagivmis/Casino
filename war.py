@@ -46,7 +46,6 @@ def run_war():
     #
     import cfg
     import casino
-    from cfg import Color
     ##
 
     # UTILITIES:
@@ -60,12 +59,12 @@ def run_war():
     while start_game == 1:
         bet = cfg.new_player.new_bet()
         card = cfg.new_player.hand.draw_card_from_deck(deck)
-        print(f"Your card: ", Color.BOLD + show_card(card) + Color.END)
+        print(f"Your card: ", show_card(card))
         oppcard = cfg.opponent.hand.draw_card_from_deck(deck)
-        print(f"Opponent's card: ", Color.BOLD + show_card(oppcard) + Color.END)
+        print(f"Opponent's card: ", show_card(oppcard))
         if card.number < oppcard.number:
             cfg.new_player.lose(bet)
-            print("\nanother game?\n1=Yes\n2=No")
+            print("\nAnother game?\n1=Yes\n2=No")
             start_game = int(input())
         elif card.number == oppcard.number:
             cfg.new_player.tie(bet)
@@ -73,5 +72,5 @@ def run_war():
             start_game = int(input())
         else:
             cfg.new_player.win(bet * 2)
-            print("\nanother game?\n1=Yes\n2=No")
+            print("\nAnother game?\n1=Yes\n2=No")
             start_game = int(input())
