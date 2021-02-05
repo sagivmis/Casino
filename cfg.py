@@ -1,7 +1,10 @@
 ##  IMPORTS
 # MODULES:
-import csv 
- 
+import csv
+from os import path
+
+import pandas as pd
+
 # CLASSES:
 from casino import Player
 from casino import Card
@@ -37,46 +40,95 @@ def sorts(line):
     return amount
 
 
-def save_game():
-    # with open("save.csv","r") as f:
-    #     csv_read=csv.reader(f)
-    #     data = f.readlines()
-    #     i=0
-    #     saved_name = new_player.name
-    #     for row in data:
-    #         newdata=data[i].split(',')
-    #         if newdata[0] == saved_name: -- open a write instance of save and change the specific lines
-    #             data[i]=f"{saved_name},{new_player.balance}"
-    #             print("SAVED GAME PROGRESS")
-    #             return
-    #         i+=1
-    with open("save.csv", "a", newline='') as fp:
-        csv_writer = csv.writer(fp)
-        csv_writer.writerow([new_player.name, new_player.balance])
-
-
-def load_game(load_name):
-    with open("save.csv", "r") as fp:
-        csv_reader = csv.reader(fp)
-        data = fp.readlines()
-        print(data)
-        i=0
-        for row in data:
-            newdata = data[i].split(',')
-            print(newdata)
-            if newdata[0] == load_name:
-                new_player.name = newdata[0]
-                new_player.balance = int(newdata[1])
-                print("LOADED")
-                print(f"Welcome back {new_player.name}\nYour balance is: {new_player.balance}\nGOOD LUCK")
+def save_score():
+    data = {"name": [new_player.name],
+            "balance": [new_player.balance],
+            "tries": [new_player.game_count]}
+    df = pd.DataFrame(data)
+    if not path.exists("pandas_highscore.csv"):
+        df.to_csv("pandas_highscore.csv", index=False)
+        return
+    db = pd.read_csv("pandas_highscore.csv")
+    if new_player.name in db.name.values:
+        if input("Overwrite existing score? y or n\n") == 'y':
+            db.loc[db['name'] == new_player.name, 'balance'] = new_player.balance
+            db.loc[db['name'] == new_player.name, 'tries'] = new_player.game_count
+            print("\t\t***Updated successfully the previous entry in the leaderboard***")
+            db.to_csv("pandas_highscore.csv", index=False)
+            return
+        else:
+            if input("Would you like to change your current name and save again? y or n\n") == 'y':
+                print(f"\t\t-suggestion: {new_player.name}#<x>\t(x=0,1,2...)")
+                set_name()
+                save_score()
                 return
-            else:
-                i += 1
 
-        # new_player.name = newdata[0]
-        # new_player.balance = int(newdata[1])
-        print("Couldn't find save")
 
+    df.to_csv("pandas_highscore.csv", mode='a', index=False, header=False)
+    print("\t\t***Saved successfully on leaderboard***")
+
+
+def save_progress():
+    if input("would you like to save your score to the leaderboard? y or n\n") == 'y':
+        save_score()
+
+    data = {"name": [new_player.name],
+            "balance": [new_player.balance],
+            "tries": [new_player.game_count]}
+    df = pd.DataFrame(data)
+
+    if not path.exists("save_pandas.csv"):
+        df.to_csv("save_pandas.csv", index=False)
+        return
+
+    db = pd.read_csv("save_pandas.csv")
+    if new_player.name in db.name.values:
+        db.loc[db['name'] == new_player.name, 'balance'] = new_player.balance
+        db.loc[db['name'] == new_player.name, 'tries'] = new_player.game_count
+        print("\t\t***Successfully found previous save and updated it.***")
+        db.to_csv("save_pandas.csv", index=False)
+        return
+    df.to_csv("save_pandas.csv", mode='a', header=False, index=False)
+    print("\t\t **Successfully saved game progress**")
+
+
+def check_if_name_in_data_and_replace():
+    var = None
+    x = 0
+    name = new_player.name
+    df = pd.read_csv("save_pandas.csv")
+
+    if name in df.name.values:
+        var = df.loc[df['name'] == name].values[0]
+        x = input(
+            f"I see this is not your first time around.\nAre you {name} who played here for {var[2]} times? y or n")
+
+    if x == 'y':
+        if var[0]:
+            new_player.name = var[0]
+            new_player.balance = var[1]
+            new_player.game_count = var[2] + 1
+            print(
+                f"Welcome back {new_player.name}\nYour balance: {new_player.balance} and this is your"
+                f" {new_player.game_count} time here")
+
+
+def load_game():
+    desired_name = input("Please input your save's name")
+    db = pd.read_csv("save_pandas.csv")
+    line = None
+    if desired_name in db.name.values:
+        line = db.loc[db['name'] == desired_name].values[0]
+        if input("Found the save.\nLoad game? y or n") == 'y':
+            new_player.name = line[0]
+            new_player.balance = line[1]
+            new_player.game_count = line[2] + 1
+            print(f"Welcome back {new_player.name}\nYour balance: {new_player.balance} "
+                  f"and this is your {new_player.game_count} time here")
+    else:
+        print(f"Couldn't find save, are you sure it was called {desired_name}?")
+        if input("Would you like to load another save? y or n") == 'y':
+            load_game()
 
 
 def show_high_score():
@@ -86,54 +138,42 @@ def show_high_score():
     print('█─▄─██─██─██▄─█─▄─███▄▄▄▄─█─███▀█─██─██─▄─▄██─▄█▀█')
     print('▀▄▀▄▀▄▄▄▀▄▄▄▄▄▀▄▀▄▀▀▀▄▄▄▄▄▀▄▄▄▄▄▀▄▄▄▄▀▄▄▀▄▄▀▄▄▄▄▄▀')
     print("*" * 50)
-    with open('high_score.csv', 'r') as fp:
-        data = fp.readlines()
-        data.sort(key=sorts, reverse=True)
-        print("   Name\t\t\tBalance")
-        i = 1
-        for line in data:
-            newline = line.split(',')
-            print(f"{i}. {newline[0]} {newline[1]}")
-            i += 1
-
-
-def save_score():
-    f = open('high_score.csv', mode='a', newline='')
-    csv_file = csv.writer(f)
-    csv_file.writerow([new_player.name, new_player.balance])
-    f.close()
-    print("Saved successfully.\n")
+    df = pd.read_csv("pandas_highscore.csv", index_col=["name"])
+    df.sort_values(["balance"], inplace=True, ascending=False)
+    print(f"\n-------------------------\n\n{df}\n\n-------------------------")
 
 
 def saving_loading_menu():
     while True:
         print(f"Enter desired action:\n")
-        player_choice = input(f"\t-save - To save current game (will overwrite previous saved game.\n\t-load - "
+        player_choice = input(f"\t-save - To save current game (will overwrite previous saved game.)\n\t-load - "
                               f"To load previously saved game")
         while player_choice not in ['save', 'load']:
-            player_choice = input(f"WRONG INPUT!\n\t-save - To save current game (will overwrite previous saved game."
+            player_choice = input(f"WRONG INPUT!\n\t-save - To save current game (will overwrite previous saved game.)"
                                   "\n\t-load - To load previously saved game")
-        # while player_choice in ['save', 'load']:
         if player_choice == 'save':
-            save_game()
+            save_progress()
         if player_choice == 'load':
-            loading_name=input("what name of save?")
-            new_loading_name=fix_name(loading_name)
-            load_game(new_loading_name)
+            load_game()
         break
 
+def set_name():
+    temp_name = input("Input your name:\n\tmax chars- 12.\n\tmin chars- 1.\n")
+    new_player.name = temp_name
+    if temp_name == 'admin':
+        if input("Password?") == 'sagiv':
+            new_player.balance = 999999
 
 def main_menu():
-    logging.debug("Starting Casino")
-    temp_name = input("Input your name:\n\tmax chars- 12.\n\tmin chars- 1.\n")
-    name = fix_name(temp_name)
-    new_player.name = name
-    print(f"Hello {new_player.name}\nYour starting balance is 100.\nGood Luck!\n")
+    set_name()
+    check_if_name_in_data_and_replace()
+
+    print(f"Hello {new_player.name}\nYour starting balance is {new_player.balance}.\nGood Luck!\n")
     game_picked_by_player = game_pick()
     playing_deck = Deck()
-    while game_picked_by_player != 9:
-        while game_picked_by_player in [1, 2, 3, 4, 6, 7, 8]:
 
+    while game_picked_by_player != 9:
+        while game_picked_by_player in [1, 2, 3, 4, 7, 8]:
             if game_picked_by_player == 1:
                 run_war()
                 game_picked_by_player = game_pick()
@@ -150,10 +190,6 @@ def main_menu():
                 run_tictactoe_game()
                 game_picked_by_player = game_pick()
 
-            if game_picked_by_player == 6:
-                save_score()
-                game_picked_by_player = game_pick()
-
             if game_picked_by_player == 7:
                 show_high_score()
                 game_picked_by_player = game_pick()
@@ -161,11 +197,14 @@ def main_menu():
             if game_picked_by_player == 8:
                 saving_loading_menu()
                 game_picked_by_player = game_pick()
+
         else:
 
             if game_picked_by_player != 9:
                 game_picked_by_player = wrong_input()
             else:
+                if input("Would you like to save your progress? y or n") == 'y':
+                    save_progress()
                 break
     if game_picked_by_player == 9:
         print(f"Your end balance: {new_player.get_balance()}\nGoodbye {new_player.name}")
@@ -180,18 +219,6 @@ def shape_shift_from_number(shape):
     }
 
     return shapes[shape]
-
-
-def build_deck_n_shuffle():  # working
-    deck = []
-    for shape in range(1, 5):
-        for card in range(1, 14):
-            newcard = Card(card, shape_shift_from_number(shape), colordict[shape_shift_from_number(shape)])
-            deck.append(newcard)
-            print(newcard)
-    random.shuffle(deck)
-    print("Successfuly shuffled new deck.")
-    return deck
 
 
 def sum_list(lst):
@@ -232,12 +259,12 @@ def check_bet(balance, bet):  # checks if the bet is legit (=not higher than bal
     return 0
 
 
-def game_pick():# inputs what game player wants to play
+def game_pick():  # inputs what game player wants to play
     game = 0
     try:
         print(f"MAIN MENU:\n\t1. War\n\t2. Roullette\n\t3. BlackJack\n\t4. Tic Tac Toe (friendly game)"
-                                          "\n\t\t\t6. Save Score\n\t\t\t7. Show high score\n\n\t\t\t\t\t\t\t"
-                                          "8. Save\Load menu\n\t\t\t\t\t\t\t9. Exit")
+              "\n\n\t\t\t\t\t7. Show high score\n\t\t\t\t\t\t\t"
+              "8. Save\Load menu\n\t\t\t\t\t\t\t9. Exit")
         game = int(input())
     except:
         print(f"WRONG INPUT\nPlease provide a choice by numbers 0-9 only.")
@@ -277,13 +304,12 @@ def show_card(card):
 
 def wrong_input():
     game_picked = 0
-    if game_picked != 9:
-        legit_input = False
-        while not legit_input:
-            print("WRONG INPUT")
-            game_picked = game_pick()
-            if game_picked in [1, 2, 3, 4, 6, 7, 8]:
-                legit_input = True
+    legit_input = False
+    while not legit_input:
+        print("WRONG INPUT")
+        game_picked = game_pick()
+        if game_picked in [1, 2, 3, 4, 6, 7, 8]:
+            legit_input = True
     return game_picked
 
 

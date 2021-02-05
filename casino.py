@@ -67,6 +67,7 @@ class Card:
 class Player:
 
     def __init__(self, name, balance=0):
+        self.game_count=0
         self.name = name
         self.balance = balance
         self.cards = []
@@ -178,6 +179,9 @@ class Hand:
 
 
 if __name__ == '__main__':
-    cfg.main_menu()
+    another_game = input("Start casino? y or n")
+    while another_game == 'y':
+        cfg.main_menu()
+        another_game = input("Start casino? y or n")
 
 # ask to save before quit?
