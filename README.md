@@ -7,7 +7,6 @@ Goofying around with python
 - [Overview](#overview)
   - [The game](#the-game)
   - [Screenshot](#screenshot)
-  - [Links](#links)
 - [My process](#my-process)
   - [Built with](#built-with)
   - [What I learned](#what-i-learned)
@@ -28,9 +27,6 @@ Users should be able to:
 
 ![](./screenshot.jpg)
 
-
-### Links
-// deploy and edit
 
 ## My process
 
